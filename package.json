@@ -1,0 +1,42 @@
+{
+  "name": "@medley/self-request",
+  "version": "0.0.0",
+  "description": "Medley plugin that augments an app to be able to make HTTP requests to itself for testing purposes",
+  "author": "Nathan Woltman <nwoltman@outlook.com>",
+  "license": "MIT",
+  "main": "self-request.js",
+  "files": [
+    "self-request.js"
+  ],
+  "engines": {
+    "node": ">=8.9.0"
+  },
+  "repository": "github:medleyjs/self-request",
+  "homepage": "https://github.com/medleyjs/self-request",
+  "bugs": "https://github.com/medleyjs/self-request/issues",
+  "keywords": [
+    "medley",
+    "plugin",
+    "self-request",
+    "request",
+    "testing",
+    "test"
+  ],
+  "dependencies": {
+    "got": "^9.6.0"
+  },
+  "devDependencies": {
+    "@medley/medley": "~0.10.0",
+    "@nwoltman/eslint-config": "~0.2.1",
+    "coveralls": "^3.0.4",
+    "eslint": "^5.16.0",
+    "mocha": "^6.1.4",
+    "nyc": "^14.1.1"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "test-only": "nyc --reporter=html --reporter=text-summary mocha",
+    "test": "npm run lint && npm run test-only",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+  }
+}
