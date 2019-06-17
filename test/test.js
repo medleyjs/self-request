@@ -41,20 +41,6 @@ describe('self-request', () => {
     assert.deepStrictEqual(res2.body, Buffer.from('success'));
   });
 
-  it('should support `path` as an alias for `url`', async () => {
-    const app = medley();
-
-    app.register(selfRequest);
-
-    app.get('/route', (req, res) => {
-      res.send('success');
-    });
-
-    const res = await app.request({path: '/route'});
-    assert.strictEqual(res.statusCode, 200);
-    assert.strictEqual(res.body, 'success');
-  });
-
   it('should not follow redirects by default', async () => {
     const app = medley();
 

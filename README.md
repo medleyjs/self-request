@@ -56,17 +56,17 @@ describe('app', () => {
 
 ### API
 
-#### `app.request([path], [options])`
+#### `app.request([url], [options])`
 
 Returns a Promise for a [got `response` object](https://www.npmjs.com/package/got#response).
 
 > Automatically calls [`app.listen()`](https://github.com/medleyjs/medley/blob/master/docs/App.md#listen) if the server is not already listening.
 
-##### `path`
+##### `url`
 
 Type: `string`
 
-The route path to request.
+The route URL to request.
 
 ```js
 app.request('/hello');
@@ -78,8 +78,6 @@ Type: `Object`
 
 Any of the [`got` options](https://www.npmjs.com/package/got#options).
 
-Additionally, `path` can be used as an alias for got’s `url` option.
-
 ```js
 app.request('/hello', {
   method: 'POST',
@@ -88,13 +86,6 @@ app.request('/hello', {
 
 app.request({
   url: '/hello',
-  method: 'POST',
-  body: 'Greetings',
-});
-
-// `path` as alias for `url`
-app.request({
-  path: '/hello',
   method: 'POST',
   body: 'Greetings',
 });

@@ -24,9 +24,9 @@ function selfRequest(app, {
 
   let gotClient = null;
 
-  app.decorate('request', function request(path, options) {
+  app.decorate('request', function request(url, options) {
     if (!app.server.listening) {
-      return app.listen(0, 'localhost').then(() => request(path, options));
+      return app.listen(0, 'localhost').then(() => request(url, options));
     }
 
     if (gotClient === null) {
@@ -37,12 +37,7 @@ function selfRequest(app, {
       gotClient = got.extend(gotOptions);
     }
 
-    if (typeof path === 'object' && path.path !== undefined) {
-      options = path;
-      path = options.path;
-    }
-
-    return gotClient(path, options);
+    return gotClient(url, options);
   });
 }
 
