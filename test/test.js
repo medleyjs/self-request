@@ -41,6 +41,30 @@ describe('self-request', () => {
     assert.deepStrictEqual(res2.body, Buffer.from('success'));
   });
 
+  it('should work if .request() is called multiple times before the server is started', async () => {
+    const app = medley();
+
+    app.register(selfRequest);
+
+    app.get('/', (req, res) => {
+      res.send('success');
+    });
+
+    const [
+      res1,
+      res2,
+    ] = await Promise.all([
+      app.request('/'),
+      app.request('/', {encoding: null}),
+    ]);
+
+    assert.strictEqual(res1.statusCode, 200);
+    assert.strictEqual(res1.body, 'success');
+
+    assert.strictEqual(res2.statusCode, 200);
+    assert.deepStrictEqual(res2.body, Buffer.from('success'));
+  });
+
   it('should not follow redirects by default', async () => {
     const app = medley();
 
