@@ -161,7 +161,7 @@ describe('self-request', () => {
       res.send('success');
     });
 
-    const res = await app.request('/', {rejectUnauthorized: false});
+    const res = await app.request('/');
     assert.strictEqual(res.statusCode, 200);
     assert.strictEqual(res.body, 'success');
   });
@@ -181,7 +181,7 @@ describe('self-request', () => {
       res.send('success');
     });
 
-    const res = await app.request('/', {rejectUnauthorized: false});
+    const res = await app.request('/');
     assert.strictEqual(res.statusCode, 200);
     assert.strictEqual(res.body, 'success');
   });

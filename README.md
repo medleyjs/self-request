@@ -160,6 +160,7 @@ These options will be merged in with the following defaults set by `self-request
   retries: 0,
   followRedirect: false,
   throwHttpErrors: false,
+  rejectUnauthorized: false,
 }
 ```
 

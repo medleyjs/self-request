@@ -17,6 +17,7 @@ function selfRequest(app, {
     retries: 0,
     followRedirect: false,
     throwHttpErrors: false,
+    rejectUnauthorized: false,
     baseUrl: getProtocol(app.server) + '//localhost',
     ...gotDefaults,
   };
