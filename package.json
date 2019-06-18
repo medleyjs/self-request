@@ -1,6 +1,6 @@
 {
   "name": "@medley/self-request",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Medley plugin that augments an app to be able to make HTTP requests to itself for testing purposes",
   "author": "Nathan Woltman <nwoltman@outlook.com>",
   "license": "MIT",
