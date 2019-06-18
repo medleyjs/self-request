@@ -14,7 +14,7 @@ function selfRequest(app, {
   gotDefaults,
 } = {}) {
   const gotOptions = {
-    retries: 0,
+    retry: 0,
     followRedirect: false,
     throwHttpErrors: false,
     rejectUnauthorized: false,

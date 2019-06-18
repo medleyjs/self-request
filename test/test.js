@@ -93,16 +93,13 @@ describe('self-request', () => {
 
     app.register(selfRequest);
 
-    try {
-      await app.request('/no-route', {throwHttpErrors: true});
+    app.get('/', (req, res) => {
+      res.error(new Error('retry test error'));
+    });
 
-      return Promise.reject(new assert.AssertionError({
-        message: 'Expected the request to throw',
-      }));
-    } catch (err) {
-      assert.strictEqual(err.statusCode, 404);
-      assert.strictEqual(err.response.retryCount, 0);
-    }
+    const res = await app.request('/');
+    assert.strictEqual(res.retryCount, 0);
+    assert.strictEqual(res.statusCode, 500);
   });
 
   it('should accept `gotDefaults` plugin option', async () => {

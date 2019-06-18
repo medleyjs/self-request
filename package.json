@@ -35,8 +35,7 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "test-only": "nyc --reporter=html --reporter=text-summary mocha",
-    "test": "npm run lint && npm run test-only",
+    "test": "eslint . && nyc --reporter=html --reporter=text-summary mocha",
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
   }
 }
