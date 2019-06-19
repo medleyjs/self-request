@@ -33,7 +33,7 @@ module.exports = app;
 
 **test.js**
 ```js
-const assert = require('assert');
+const assert = require('assert').strict;
 
 function buildApp() {
   const app = require('./app');
