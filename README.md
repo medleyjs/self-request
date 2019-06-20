@@ -149,6 +149,7 @@ These options will be merged in with the following defaults set by `self-request
 ```js
 {
   retry: 0,
+  timeout: 2000,
   followRedirect: false,
   throwHttpErrors: false,
   rejectUnauthorized: false,

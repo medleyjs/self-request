@@ -15,6 +15,7 @@ function selfRequest(app, {
 } = {}) {
   const gotOptions = {
     retry: 0,
+    timeout: 2000,
     followRedirect: false,
     throwHttpErrors: false,
     rejectUnauthorized: false,

@@ -193,4 +193,23 @@ describe('self-request', () => {
     assert.strictEqual(res.body, 'success');
   });
 
+  it('should timeout after 2000ms by default', async function() {
+    this.timeout(3000);
+
+    const app = medley();
+
+    app.register(selfRequest);
+
+    app.get('/', () => {
+      // Cause timeout by not responding
+    });
+
+    try {
+      await app.request('/');
+      assert.fail('timeout request should not succeed');
+    } catch (err) {
+      assert.strictEqual(err.code, 'ETIMEDOUT');
+    }
+  });
+
 });
