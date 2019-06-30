@@ -19,21 +19,22 @@ function selfRequest(app, {
     followRedirect: false,
     throwHttpErrors: false,
     rejectUnauthorized: false,
-    baseUrl: getProtocol(app.server) + '//localhost',
+    baseUrl: '', // Gets set in request()
     ...gotDefaults,
   };
 
   let gotClient = null;
 
-  app.decorate('request', function request(url, options) {
-    if (!app.server.listening) {
-      return app.listen(0, 'localhost').then(() => request(url, options));
+  app.decorate('request', async function request(url, options) {
+    if (app.server === null || !app.server.listening) {
+      await app.listen(0, 'localhost');
     }
 
     if (gotClient === null) {
       app.server.unref();
 
-      gotOptions.baseUrl += ':' + app.server.address().port + basePath;
+      gotOptions.baseUrl =
+        getProtocol(app.server) + '//localhost:' + app.server.address().port + basePath;
 
       gotClient = got.extend(gotOptions);
     }
@@ -41,9 +42,5 @@ function selfRequest(app, {
     return gotClient(url, options);
   });
 }
-
-selfRequest.meta = {
-  name: '@medley/self-request',
-};
 
 module.exports = selfRequest;

@@ -2,6 +2,7 @@
 
 const assert = require('assert');
 const fs = require('fs');
+const http = require('http');
 const medley = require('@medley/medley');
 const path = require('path');
 const selfRequest = require('../self-request');
@@ -193,6 +194,38 @@ describe('self-request', () => {
     assert.strictEqual(res.body, 'success');
   });
 
+  it('should support custom servers', async () => {
+    const app = medley({
+      server: http.createServer(),
+    });
+
+    app.register(selfRequest);
+
+    app.get('/', (req, res) => {
+      res.send('success');
+    });
+
+    const res = await app.request('/');
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.body, 'success');
+  });
+
+  it('should work if the server is already listening', async () => {
+    const app = medley();
+
+    app.register(selfRequest);
+
+    app.get('/', (req, res) => {
+      res.send('success');
+    });
+
+    await app.listen();
+
+    const res = await app.request('/');
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.body, 'success');
+  });
+
   it('should timeout after 2000ms by default', async function() {
     this.timeout(3000);
 
@@ -204,12 +237,13 @@ describe('self-request', () => {
       // Cause timeout by not responding
     });
 
-    try {
-      await app.request('/');
-      assert.fail('timeout request should not succeed');
-    } catch (err) {
-      assert.strictEqual(err.code, 'ETIMEDOUT');
-    }
+    await assert.rejects(
+      app.request('/'),
+      {
+        name: 'TimeoutError',
+        code: 'ETIMEDOUT',
+      }
+    );
   });
 
 });
