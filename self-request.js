@@ -25,7 +25,7 @@ function selfRequest(app, {
 
   let gotClient = null;
 
-  app.decorate('request', async function request(url, options) {
+  app.extend('request', async function request(url, options) {
     if (app.server === null || !app.server.listening) {
       await app.listen(0, 'localhost');
     }
