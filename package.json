@@ -22,20 +22,30 @@
     "testing",
     "test"
   ],
+  "nyc": {
+    "reporter": [
+      "html",
+      "text-summary"
+    ],
+    "check-coverage": true,
+    "branches": 100,
+    "lines": 100,
+    "statements": 100
+  },
   "dependencies": {
     "got": "^9.6.0"
   },
   "devDependencies": {
     "@medley/medley": "~0.12.0",
-    "@nwoltman/eslint-config": "~0.2.1",
-    "coveralls": "^3.0.4",
-    "eslint": "^5.16.0",
-    "mocha": "^6.1.4",
+    "@nwoltman/eslint-config": "~0.5.1",
+    "coveralls": "^3.0.7",
+    "eslint": "^6.6.0",
+    "mocha": "^6.2.2",
     "nyc": "^14.1.1"
   },
   "scripts": {
-    "lint": "eslint .",
-    "test": "eslint . && nyc --reporter=html --reporter=text-summary mocha",
+    "lint": "eslint *.js test/*.js",
+    "test": "eslint *.js test/*.js && nyc mocha",
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
   }
 }
