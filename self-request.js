@@ -11,7 +11,7 @@ function getProtocol(server) {
 
 function selfRequest(app, {
   basePath = app.basePath,
-  gotDefaults,
+  gotDefaults = {},
 } = {}) {
   const gotOptions = {
     retry: 0,
@@ -21,6 +21,10 @@ function selfRequest(app, {
     rejectUnauthorized: false,
     prefixUrl: '', // Gets set in request()
     ...gotDefaults,
+    headers: {
+      'user-agent': '@medley/self-request (https://github.com/medleyjs/self-request)',
+      ...gotDefaults.headers,
+    },
   };
 
   let gotClient = null;

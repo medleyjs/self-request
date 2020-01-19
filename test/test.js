@@ -129,6 +129,20 @@ describe('self-request', () => {
     assert.strictEqual(res.statusCode, 500);
   });
 
+  it('should have a custom User-Agent header by default', async () => {
+    const app = medley();
+
+    app.register(selfRequest);
+
+    app.get('/', (req, res) => {
+      res.send(req.headers['user-agent']);
+    });
+
+    const res = await app.request('/');
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.body, '@medley/self-request (https://github.com/medleyjs/self-request)');
+  });
+
   it('should accept `gotDefaults` plugin option', async () => {
     const app = medley();
 
@@ -150,6 +164,27 @@ describe('self-request', () => {
     const res = await app.request('/');
     assert.strictEqual(res.statusCode, 200);
     assert.deepStrictEqual(res.body, Buffer.from('redirected'));
+  });
+
+  it('should accept `gotDefaults.headers` without overriding the plugin’s default headers', async () => {
+    const app = medley();
+
+    app.register(selfRequest, {
+      gotDefaults: {
+        headers: {
+          'x-custom-header': 'test',
+        },
+      },
+    });
+
+    app.get('/', (req, res) => {
+      res.send(req.headers);
+    });
+
+    const res = await app.request('/', {responseType: 'json'});
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.body['x-custom-header'], 'test');
+    assert.strictEqual(res.body['user-agent'], '@medley/self-request (https://github.com/medleyjs/self-request)');
   });
 
   it('should accept `basePath` plugin option', async () => {

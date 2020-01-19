@@ -153,6 +153,9 @@ These options will be merged in with the following defaults:
   followRedirect: false,
   throwHttpErrors: false,
   rejectUnauthorized: false,
+  headers: {
+    'user-agent': '@medley/self-request (https://github.com/medleyjs/self-request)',
+  },
 }
 ```
 
