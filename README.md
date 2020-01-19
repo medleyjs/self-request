@@ -76,7 +76,7 @@ app.request('/hello');
 
 Type: `Object`
 
-Any of the [`got` options](https://www.npmjs.com/package/got#options).
+An object of [`got` options](https://www.npmjs.com/package/got#options).
 
 ```js
 app.request('/hello', {
@@ -142,9 +142,9 @@ v1Routes.register(require('@medley/self-request'));
 
 Type: `Object`
 
-A set of [`got` options](https://www.npmjs.com/package/got#options) that will be used as the defaults for each request.
+An object of [`got` options](https://www.npmjs.com/package/got#options) that will be used as the defaults for each request.
 
-These options will be merged in with the following defaults set by `self-request`:
+These options will be merged in with the following defaults:
 
 ```js
 {
@@ -168,7 +168,7 @@ app.get('/', (req, res) => {
 
 app.register(require('@medley/self-request'), {
   gotDefaults: {
-    encoding: null,
+    responseType: 'buffer',
   },
 });
 
@@ -178,4 +178,4 @@ app.register(require('@medley/self-request'), {
 })();
 ```
 
-**Note:** The `baseUrl` got option cannot be used since it is automatically set by this plugin.
+**Note:** The `prefixUrl` got option cannot be used since it is automatically set by this plugin.

@@ -37,9 +37,35 @@ describe('self-request', () => {
     assert.strictEqual(res1.statusCode, 200);
     assert.strictEqual(res1.body, 'success');
 
-    const res2 = await app.request('/', {encoding: null});
+    const res2 = await app.request('/', {responseType: 'buffer'});
     assert.strictEqual(res2.statusCode, 200);
     assert.deepStrictEqual(res2.body, Buffer.from('success'));
+  });
+
+  it('should not require URLs to have a leading slash "/" character', async () => {
+    const app = medley();
+
+    app.get('/', (req, res) => {
+      res.send('success');
+    });
+
+    app.get('/hello', (req, res) => {
+      res.send('hello');
+    });
+
+    app.register(selfRequest);
+
+    const res1 = await app.request({url: ''});
+    assert.strictEqual(res1.statusCode, 200);
+    assert.strictEqual(res1.body, 'success');
+
+    const res2 = await app.request('');
+    assert.strictEqual(res2.statusCode, 200);
+    assert.deepStrictEqual(res2.body, 'success');
+
+    const res3 = await app.request('hello');
+    assert.strictEqual(res3.statusCode, 200);
+    assert.deepStrictEqual(res3.body, 'hello');
   });
 
   it('should work if .request() is called multiple times before the server is started', async () => {
@@ -56,7 +82,7 @@ describe('self-request', () => {
       res2,
     ] = await Promise.all([
       app.request('/'),
-      app.request('/', {encoding: null}),
+      app.request('/', {responseType: 'buffer'}),
     ]);
 
     assert.strictEqual(res1.statusCode, 200);
@@ -109,7 +135,7 @@ describe('self-request', () => {
     app.register(selfRequest, {
       gotDefaults: {
         followRedirect: true,
-        encoding: null,
+        responseType: 'buffer',
       },
     });
 

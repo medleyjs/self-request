@@ -19,7 +19,7 @@ function selfRequest(app, {
     followRedirect: false,
     throwHttpErrors: false,
     rejectUnauthorized: false,
-    baseUrl: '', // Gets set in request()
+    prefixUrl: '', // Gets set in request()
     ...gotDefaults,
   };
 
@@ -33,10 +33,20 @@ function selfRequest(app, {
     if (gotClient === null) {
       app.server.unref();
 
-      gotOptions.baseUrl =
+      gotOptions.prefixUrl =
         getProtocol(app.server) + '//localhost:' + app.server.address().port + basePath;
 
       gotClient = got.extend(gotOptions);
+    }
+
+    // Ensure the url does not start with a '/'
+    if (typeof url === 'object') { // url is options object
+      const urlPath = url.url;
+      if (typeof urlPath === 'string' && urlPath !== '' && urlPath[0] === '/') {
+        url = {...url, url: urlPath.slice(1)};
+      }
+    } else if (typeof url === 'string' && url !== '' && url[0] === '/') {
+      url = url.slice(1);
     }
 
     return gotClient(url, options);

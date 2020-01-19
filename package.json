@@ -36,15 +36,15 @@
     "@medley/medley": ">=0.13.0"
   },
   "dependencies": {
-    "got": "^9.6.0"
+    "got": "^10.2.2"
   },
   "devDependencies": {
     "@medley/medley": "~0.13.0",
-    "@nwoltman/eslint-config": "~0.5.1",
-    "coveralls": "^3.0.7",
-    "eslint": "^6.6.0",
-    "mocha": "^6.2.2",
-    "nyc": "^14.1.1"
+    "@nwoltman/eslint-config": "~0.6.0",
+    "coveralls": "^3.0.9",
+    "eslint": "^6.8.0",
+    "mocha": "^7.0.0",
+    "nyc": "^15.0.0"
   },
   "scripts": {
     "lint": "eslint *.js test/*.js",
