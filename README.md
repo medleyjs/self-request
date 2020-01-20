@@ -7,7 +7,7 @@
 
 A [Medley](https://www.npmjs.com/package/@medley/medley) plugin that augments an app to be able to make HTTP requests to itself for testing purposes.
 
-It adds a `request` method to the `app` that will start the app server and make HTTP requests to it using [`got`](https://www.npmjs.com/package/got).
+It adds a `.request()` method to the `app` that will start the app server and make HTTP requests to it using [`got`](https://www.npmjs.com/package/got).
 
 ## Installation
 
@@ -17,7 +17,7 @@ npm install @medley/self-request --save-dev
 yarn add @medley/self-request --dev
 ```
 
-## Usage
+## Example Usage
 
 **app.js**
 ```js
@@ -34,18 +34,12 @@ module.exports = app;
 **test.js**
 ```js
 const assert = require('assert').strict;
+const app = require('./app');
 
-function buildApp() {
-  const app = require('./app');
-
-  app.register(require('@medley/self-request'));
-
-  return app;
-}
+app.register(require('@medley/self-request'));
 
 describe('app', () => {
   it('should say Hello', async () => {
-    const app = buildApp();
     const res = await app.request('/');
 
     assert.equal(res.statusCode, 200);
@@ -54,91 +48,9 @@ describe('app', () => {
 });
 ```
 
-### API
+## Plugin Options
 
-#### `app.request([url], [options])`
-
-Returns a Promise for a [got `response` object](https://www.npmjs.com/package/got#response).
-
-> Automatically calls [`app.listen()`](https://github.com/medleyjs/medley/blob/master/docs/App.md#listen) if the server is not already listening.
-
-##### `url`
-
-Type: `string`
-
-The route URL to request.
-
-```js
-app.request('/hello');
-```
-
-##### `options`
-
-Type: `Object`
-
-An object of [`got` options](https://www.npmjs.com/package/got#options).
-
-```js
-app.request('/hello', {
-  method: 'POST',
-  body: 'Greetings',
-});
-
-app.request({
-  url: '/hello',
-  method: 'POST',
-  body: 'Greetings',
-});
-```
-
-### Plugin Options
-
-#### `basePath`
-
-Type: `string`<br>
-Default: `app.basePath`
-
-A path prefix that will be prepended to all requests.
-
-```js
-const medley = require('@medley/medley');
-const app = medley();
-
-app.get('/v1/hello', (req, res) => {
-  res.send('Hello');
-});
-
-app.register(require('@medley/self-request'), {
-  basePath: '/v1',
-});
-
-(async () => {
-  const res = await app.request('/hello');
-  console.log(res.body); // -> 'Hello'
-})();
-````
-
-Since the default is `app.basePath`, testing [sub-apps](https://github.com/medleyjs/medley/blob/master/docs/App.md#createsubapp) is trivial:
-
-```js
-const medley = require('@medley/medley');
-const app = medley();
-
-const v1Routes = app.createSubApp('/v1');
-
-v1Routes.get('/hello', (req, res) => {
-  res.send('Hello');
-});
-
-v1Routes.register(require('@medley/self-request'));
-
-(async () => {
-  const res = await v1Routes.request('/hello');
-  console.log(res.body); // -> 'Hello'
-})();
-````
-
-#### `gotDefaults`
+### `gotDefaults`
 
 Type: `Object`
 
@@ -166,19 +78,77 @@ const medley = require('@medley/medley');
 const app = medley();
 
 app.get('/', (req, res) => {
-  res.send('Hello');
+  res.send({ hello: 'world' });
 });
 
 app.register(require('@medley/self-request'), {
   gotDefaults: {
-    responseType: 'buffer',
+    responseType: 'json',
   },
 });
 
 (async () => {
   const res = await app.request('/hello');
-  console.log(res.body); // -> <Buffer 48 65 6c 6c 6f>
+  console.log(res.body); // { hello: 'world' }
 })();
 ```
 
-**Note:** The `prefixUrl` got option cannot be used since it is automatically set by this plugin.
+## API
+
+### `app.request([url], [options])`
+
+Returns a Promise that resolves with a [got `response` object](https://www.npmjs.com/package/got#response).
+
+> Automatically calls [`app.listen()`](https://github.com/medleyjs/medley/blob/master/docs/App.md#listen) if the server is not already listening.
+
+#### `url`
+
+Type: `string`
+
+The route URL to request.
+
+```js
+app.request('/hello');
+```
+
+#### `options`
+
+Type: `Object`
+
+An object of [`got` options](https://www.npmjs.com/package/got#options).
+
+```js
+app.request('/hello', {
+  method: 'POST',
+  body: 'Greetings',
+});
+
+app.request({
+  url: '/hello',
+  method: 'POST',
+  body: 'Greetings',
+});
+```
+
+#### Usage with sub-apps
+
+If called on a prefixed [sub-app](https://github.com/medleyjs/medley/blob/master/docs/App.md#createsubapp),
+the `url` is relative to that sub-app.
+
+```js
+const medley = require('@medley/medley');
+const app = medley();
+
+app.register(require('@medley/self-request'));
+
+const v1App = app.createSubApp('/v1');
+
+v1App.get('/hello', (req, res) => {
+  res.send('Hello');
+});
+
+(async () => {
+  const res = await v1App.request('/hello');
+  console.log(res.body); // -> 'Hello'
+})();
+````

@@ -61,11 +61,11 @@ describe('self-request', () => {
 
     const res2 = await app.request('');
     assert.strictEqual(res2.statusCode, 200);
-    assert.deepStrictEqual(res2.body, 'success');
+    assert.strictEqual(res2.body, 'success');
 
     const res3 = await app.request('hello');
     assert.strictEqual(res3.statusCode, 200);
-    assert.deepStrictEqual(res3.body, 'hello');
+    assert.strictEqual(res3.body, 'hello');
   });
 
   it('should work if .request() is called multiple times before the server is started', async () => {
@@ -187,29 +187,30 @@ describe('self-request', () => {
     assert.strictEqual(res.body['user-agent'], '@medley/self-request (https://github.com/medleyjs/self-request)');
   });
 
-  it('should accept `basePath` plugin option', async () => {
-    const app = medley();
-
-    app.register(selfRequest, {basePath: '/v1'});
-
-    app.get('/v1/', (req, res) => {
-      res.send('success');
-    });
-
-    const res = await app.request('/');
-    assert.strictEqual(res.statusCode, 200);
-    assert.strictEqual(res.body, 'success');
-  });
-
-  it('should default `basePath` to the app’s `basePath`', async () => {
+  it('should make requests relative a sub-app’s `basePath`', async () => {
     const app = medley();
     const subApp = app.createSubApp('/v1');
-
-    subApp.register(selfRequest);
 
     subApp.get('/', (req, res) => {
       res.send('success');
     });
+
+    subApp.register(selfRequest);
+
+    const res = await subApp.request('/');
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.body, 'success');
+  });
+
+  it('should make requests relative a sub-app’s `basePath` when the plugin is registered on the root app', async () => {
+    const app = medley();
+    const subApp = app.createSubApp('/v1');
+
+    subApp.get('/', (req, res) => {
+      res.send('success');
+    });
+
+    app.register(selfRequest);
 
     const res = await subApp.request('/');
     assert.strictEqual(res.statusCode, 200);
@@ -285,6 +286,22 @@ describe('self-request', () => {
     const res = await app.request('/');
     assert.strictEqual(res.statusCode, 200);
     assert.strictEqual(res.body, 'success');
+  });
+
+  it('should reject if the url is not provided', async () => {
+    const app = medley();
+
+    app.register(selfRequest);
+
+    await assert.rejects(
+      () => app.request(),
+      new TypeError('Missing `url` argument or option')
+    );
+
+    await assert.rejects(
+      () => app.request({}),
+      new TypeError('Missing `url` argument or option')
+    );
   });
 
   it('should timeout after 2000ms by default', async function() {
